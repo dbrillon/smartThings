@@ -1,18 +1,13 @@
 preferences {
-	input("email", "text", title: "E-mail", description: "Your neviweb® account login e-mail")
-	input("password", "password", title: "Password", description: "Your neviweb® account login password")
-	input("gatewayname", "text", title: "Network Name:", description: "Name of your neviweb® network")
-	input("devicename", "text", title: "Device Name:", description: "Name of your neviweb® thermostat")
+	input("locationname", "text", title: "Name of your neviweb® location", description: "Location name", required: true)
+	input("devicename", "text", title: "Name of your neviweb® lightswitch", description: "Lightswitch name", required: true)
 }
 
 metadata {
-	definition (name: "Sinope technologie Ligthswitch", namespace: "Sinope Technologie", author: "Mathieu Virole") {
+	definition (name: "Sinopé Technologies Inc. Ligthswitch", namespace: "Sinopé Technologies Inc.", author: "Mathieu Virole") {
 		capability "Switch"
 		capability "Refresh"
-	}
-
-	simulator {
-		// TODO: define status and reply messages here
+		command "StartCommunicationWithServer"
 	}
 
 	tiles(scale: 2) {
@@ -22,7 +17,7 @@ metadata {
 				attributeState "off", label:'${name}', action:"switch.on", icon:"st.Lighting.light13", backgroundColor:"#ffffff", nextState:"turningOn"
 			}
 		}
-		
+
 		standardTile("refresh", "device.power", inactiveLabel: false, decoration: "flat", width: 6, height: 2) {
 			state "default", label:'', action:"refresh.refresh", icon:"st.secondary.refresh"
 		}
@@ -30,300 +25,221 @@ metadata {
 		standardTile("error", "device.error", width: 6, height: 2) {
 		    state "default", label:'${currentValue}', backgroundColor:"#ffffff", icon:"st.Office.office8"
 		}
-		
+
 		main "switch"
 		details(["switch","refresh", "error"])
 	}
 }
 
+def initialize() {
+}
 def on() {
-
-	if(!isLoggedIn()) {
-		log.info "Need to login"
-		login()
-	}
-	if(data.error==true){
-		logout()
-	}else{
-    	def params = [
-			uri: "${data.server}",
-			path: "api/device/${data.deviceId}/intensity",
-			headers: ['Session-Id' : data.auth.session],
-		 	body: ['intensity': 100]
-		]
-	    requestApi("setDevice", params);
-	    refresh();
-	}    
+	def timeInSeconds = (Math.round(now()/1000))
+	log.info("Turning ${device.name} \"ON\"")
+	sendEvent(name: "switch", value: device.id+": "+timeInSeconds, state: "on", data: [deviceId: device.id, action: "on", evtTime: timeInSeconds])
 }
 
 def off() {
+	def timeInSeconds = (Math.round(now()/1000))
+	sendEvent(name: "switch", value:  device.id+": "+timeInSeconds, state: "off", data: [deviceId: device.id, action: "off", evtTime: timeInSeconds])
+	log.info("Turning ${device.name} \"OFF\"")
+}
 
-	if(!isLoggedIn()) {
-		log.info "Need to login"
-		login()
+def refresh(){
+	def timeInSeconds = (Math.round(now()/1000))
+	sendEvent(name: "switch", value:  device.id+": "+timeInSeconds, state: "refresh", data: [deviceId: device.id, action: "refresh", evtTime: timeInSeconds])
+	log.info("Refreshing ${device.name}")
+}
+
+def StartCommunicationWithServer(data){
+	// log.info "Action \"${data?.action}\" received from Service Manager with session [${data?.session}]"
+	if(!state.deviceId || state.deviceId == true || state.deviceName!= settings.devicename || state.locationName!= settings.locationname ){
+		state.deviceId = deviceId(data?.session)
 	}
-	if(data.error==true){
-		logout()
+	def params = [
+		path: "device/${state.deviceId}/attribute",
+		headers: ['Session-Id' : data.session]
+	]
+	if(!state.deviceId){
+		log.warn ("No device id found")
+    	return sendEvent(name: 'error', value: "${error(1004)}")
 	}else{
-		def params = [
-			uri: "${data.server}",
-			path: "api/device/${data.deviceId}/intensity",
-			headers: ['Session-Id' : data.auth.session],
-		 	body: ['intensity': 0]
-		]
-		requestApi("setDevice", params);
-	    refresh();
-	}    
-}
-
-def refresh() {
-
-	if(!isLoggedIn()) {
-		login()
+		switch(data.action){
+			case "on":
+				params.body = ['intensity' : 100]
+				//params.headers['Content-Type'] = 'application/json'
+				params.contentType = 'application/json'
+				requestApi("setDevice", params);
+				data.action = "refresh"
+				StartCommunicationWithServer(data)
+				break;
+			case "off":
+				params.body = ['intensity' : 0]
+				params.contentType = 'application/json'
+				requestApi("setDevice", params);
+				data.action = "refresh"
+				StartCommunicationWithServer(data)
+				break;
+			case "refresh":
+				params.query = ['attributes' : 'intensity']
+				// params.remove('body')
+				requestApi("deviceData", params);
+				break;
+			default: 
+				log.warn "invalide action"
+		}
 	}
-	if(data.error==true){
-		logout()
-	}else{
-		DeviceData()
-		runIn(15, refresh)
-	}
 }
 
-def login() {
-	data.server="https://neviweb.com/"
-	data.requested=false
-    def params = [
-        uri: "${data.server}",
-        path: 'api/login',
-        requestContentType: "application/x-www-form-urlencoded; charset=UTF-8",
-        body: ["email": settings.email, "password": settings.password, "stayConnected": "0"]
-    ]
-    requestApi("login", params);
-    if (data.auth.error){
-    	log.warn(data.auth.error.code);
-    	data.error = error(data.auth.error.code)
-    	sendEvent(name: 'error', value: "${data.error}")
-    	log.error("${data.error}")
-    	data.error=true
-    	logout()
-	}else{
-		log.info("login and password :: OK")
-    	data.error=false
-    	sendEvent(name: 'error', value: "")
-    	gatewayId()
-	} 
-    
-}
-
-def logout() {
-		data.gatewayId=null;
-		data.deviceId=null;
-      	def params = [
-			uri: "${data.server}",
-	        path: "api/logout",
-	       	requestContentType: "application/x-www-form-urlencoded; charset=UTF-8",
-	        headers: ['Session-Id' : data.auth.session]
-    	]
-        requestApi("logout", params);
-        log.info("logout :: OK")  
-}
-
-def gatewayId(){
+def deviceId(session){
+	data.deviceId = null
+	locationId(session)
 	def params = [
 		uri: "${data.server}",
-        path: "api/gateway",
+        path: "devices",
        	requestContentType: "application/json, text/javascript, */*; q=0.01",
-        headers: ['Session-Id' : data.auth.session]
-    ]
-
-    requestApi("gatewayList", params);
-    
-    def gatewayName=settings.gatewayname
-    if (gatewayName!=null){
-    	gatewayName=gatewayName.toLowerCase().replaceAll("\\s", "")
-    }
-	for(var in data.gateway_list){
-
-    	def name_gateway=var.name
-    	name_gateway=name_gateway.toLowerCase().replaceAll("\\s", "")
-
-    	if(name_gateway==gatewayName){
-    		data.gatewayId=var.id
-    		log.info("gateway ID is :: ${data.gatewayId}")
-    		sendEvent(name: 'error', value: "")
-    		data.error=false
-    		deviceId()
-    	}else{
-    		data.code=3001
-    	}
-    }
-    if (data?.gatewayId==null){
-    	data.error=error(data.code)
-    	sendEvent(name: 'error', value: "${data.error}")
-    	log.error("${data.error}")
-    	data.error=true
-    	logout()
-    }
-}
-
-def deviceId(){
-
-	def params = [
-		uri: "${data.server}",
-        path: "api/device",
-        query: ['gatewayId' : data.gatewayId],
-       	requestContentType: "application/json, text/javascript, */*; q=0.01",
-        headers: ['Session-Id' : data.auth.session]
+        headers: ['Session-Id' : session]
    	]
-    
+	if(data?.locationId){
+        params.query = ['location$id' : data.locationId]
+	}
+
    	requestApi("deviceList", params);
 
     def deviceName=settings.devicename
     if (deviceName!=null){
     	deviceName=deviceName.toLowerCase().replaceAll("\\s", "")
     }
-    for(var in data.devices_list){
-    	def name_device=var.name
-    	name_device=name_device.toLowerCase().replaceAll("\\s", "")
-    	if(name_device==deviceName){
-    		if(var.type==102 || var.type==112 || var.type==120){
-    			data.deviceId=var.id
-	    		log.info("device ID is :: ${data.deviceId}")
-	    		sendEvent(name: 'error', value: "")
-	    		DeviceData()
-	    		data.error=false
-	    		}else{
-	    			data.code=4002
-	    		}
-    	}else{
-    		data.code=4001
-    	}	
+	data?.deviceId = null
+	data.devices_list.each{var ->
+		try{
+			def name_device=var.name
+			name_device=name_device.toLowerCase().replaceAll("\\s", "")
+			if(name_device==deviceName){
+				if(var.family=="2120" || var.family=="2120-1" || var.family=="2020" || var.family=="2020-1"){
+					data.deviceId=var.id
+					data.error=false
+					state.deviceName = deviceName;
+					return data.deviceId;
+				}else{
+					data.code=4002
+				}
+			}else{
+				data.code=4001
+			}
+		}catch(e){
+			data.code=4003
+		}
     }
-    if (data?.deviceId==null){
+    if (!data?.deviceId || data.error){
     	data.error=error(data.code)
     	sendEvent(name: 'error', value: "${data.error}")
-    	log.error("${data.error}")
+		data.deviceId=null;
     	data.error=true
-    	logout()
-    }	
+    }
+	else{
+		data.deviceId
+	}
+	return data.deviceId
 }
 
-def DeviceData(){
-
-   	def params = [
-		uri: "${data.server}api/device/${data.deviceId}/data?force=1",
-		requestContentType: "application/x-www-form-urlencoded; charset=UTF-8",
-        headers: ['Session-Id' : data.auth.session]
+def locationId(session){
+	def params = [
+        path: "locations",
+       	requestContentType: "application/json, text/javascript, */*; q=0.01",
+        headers: ['Session-Id' : session]
     ]
-    
-    requestApi("deviceData", params);
+    requestApi("locationList",params)
+    def locationName=settings.locationname
+	if(locationName){
+		locationName=locationName.toLowerCase().replaceAll("\\s", "")
+	}
+	data.location_list.each{var ->    	
+    	def name_location
+		try{
+			var.name
+			name_location=var.name
+		}catch(e){
+			log.error(var)
+		}	
+		if(name_location){
+    		name_location=name_location.toLowerCase().replaceAll("\\s", "")
+		}else{
+			name_location = "INVALID LOCATION"
+		}
 
-    if (data.status.errorCode == null){
-	    if (data.status.intensity==0){
-	    	log.warn("lightswitch :: off")
-	    	sendEvent(name: "switch", value: "off")
-	    }else{
-	    	log.warn("lightswitch :: on")
-	    	sendEvent(name: "switch", value: "on")
-	    }
-    }else{
-    	data.error=error(data.status.errorCode)
-    	sendEvent(name: 'error', value: "${data.error}")
-    	log.error("${data.error}")
+    	if(name_location==locationName){
+    		data.locationId=var.id
+    		// log.info("Location ID is :: ${data.locationId}")
+			state.locationName = locationName
+    		data.error=null
+    	}
+    }
+	
+    if (data?.locationId==null){
+    	sendEvent(name: 'error', value: "${error(1)}")
+    	log.error("No location with this name or request error")
+    	data.error=true
     }
 }
 
-def isLoggedIn() {
-	log.info ("Is it login?")
-	if (data?.auth?.session!=null){
-		try{
-			def params = [
-				uri: "${data.server}",
-			    path: "api/gateway",
-			   	requestContentType: "application/json, text/javascript, */*; q=0.01",
-			    headers: ['Session-Id' : data.auth.session]
-			]
-			
-			requestApi("sessionExpired", params);
-
-			if(!data.auth) {
-				return false
-				log.error(error(1002))
-			} else {
-				if (data?.deviceId!=null){
-					return true
-				}else{
-					return false
-					log.error(error(1));
-				}
-			}
-		}catch (e){
-			log.error(e)
-			return false
-		}
-	}else{
-		return false
+def isExpiredSessionEvent(resp){
+	if( resp?.data?.error && resp?.data?.error?.code && resp?.data?.error?.code=="USRSESSEXP" ){
+		sendEvent(name: "switch", value:  device.id+": "+timeInSeconds, state: "resetSession", data: [action: "resetSession", evtTime: timeInSeconds]);
 	}
 }
 
 def requestApi(actionApi, params){
-	if (!data.requested){
-		data.requested=true
-		switch(actionApi){
-			case "login":
-				httpPost(params) { resp ->
-			        data.auth = resp.data
-			        data.requested=false
-			    }
-			break;
-			case "logout":
-				httpGet(params) {resp ->
-					data.auth = resp.data
-					data.requested=false
-		        }
-		    break;
-		    case "gatewayList":
-
-		    	httpGet(params) { response -> 
-			        data.gateway_list = response.data
-			        data.requested=false
-			    }
-			break;
-			case "deviceList":
-				httpGet(params) {resp ->
-					data.devices_list = resp.data
-					data.requested=false
-			    }
-			break;
-			case "deviceData":
-				httpGet(params) {resp ->
-					data.status = resp.data
-					data.requested=false
-			    }
-			break;
-			case "setDevice":
-				httpPut(params){
-			    	resp ->resp.data
-			    	data.requested=false
-			      	log.info("Click -> API response :: ${resp.data}") 
-			    }
-			break;
-			case "sessionExpired":
-				httpGet(params) {resp ->
-				    if(resp.data.sessionExpired==true){
-				    	log.warn error(100)
-				    	data.auth=""
-				    }
-				    data.requested=false
+	params.uri = "https://smartthings.neviweb.com/"
+	switch(actionApi){
+		case "deviceList":
+			httpGet(params) {resp ->
+				isExpiredSessionEvent(resp)
+				data.devices_list = resp.data
+				
+			}
+		break;
+		case "locationList":
+			httpGet(params) {resp ->
+				isExpiredSessionEvent(resp)
+				data.location_list = resp.data
+				
+			}
+		break;
+		case "deviceData":
+			httpGet(params) {resp ->
+				isExpiredSessionEvent(resp)
+				// log.info("Refresh API response [${resp.data}]")
+				data.status = resp.data
+				if (resp.data.errorCode == null){
+    				sendEvent(name: 'error', value: "${error(0)}")
+					if (resp.data.intensity==0){
+						sendEvent(name: "switch", value: "off")
+					}else{
+						sendEvent(name: "switch", value: "on")
+					}
+				}else{
+					data.error=error(resp.data.errorCode)
+					sendEvent(name: 'error', value: "${data.error}")
+					log.error("${data.error}")
 				}
-			break; 
-		}    
+				return resp.data
+			}
+		break;
+		case "setDevice":
+			httpPut(params){resp -> 
+				isExpiredSessionEvent(resp)
+				// log.info("setDevice -> API response :: ${resp.data}")
+			}
+		break;
 	}
+
 }
 
 def error(error){
 	switch (error) {
-		case 1: return "Gateway name or Device name is wrong."
+		case 0: return ""
+		case 1: return "Location name or Device name is wrong."
 		case 100: return "Your session expired."
         case 1005: return "This action cannot be executed while in demonstration mode."
         case 1004: return "The resource you are trying to access could not be found."
@@ -340,7 +256,7 @@ def error(error){
         case 2001: return "The device you are trying to access is temporarily unaccessible. Please try later."
         case 2002: return "The network you are trying to access is temporarily unavailable. Please try later."
         case 2003: return "The web interface (GT125) that you are trying to add is already present in your account."
-        case 3001: return "Wrong gateway name. Please try again."
+        case 3001: return "Wrong location name. Please try again."
         case 4001: return "Wrong device name. Please try again."
         case 4002: return "This device is not Ligthswitch. Please change DeviceName."
         default: return "An error has occurred, please try again later."

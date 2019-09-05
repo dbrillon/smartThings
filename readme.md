@@ -1,16 +1,17 @@
+
 # SmartThings Public Github Repo
 
 <ul>
-	<li><a href="#th" title="Titre">Thermostat</a>
+	<li><a href="#driver" title="Titre">Handlers / Pilotes</a>
 		<ul>
-			<li><a href="#Tfr" title="Titre">Francais</a></li>
 			<li><a href="#Ten" title="Titre">English</a></li>
+			<li><a href="#Tfr" title="Titre">Francais</a></li>
 		</ul>
 	</li>
-	<li><a href="#sw" title="Titre">Ligthswitch / Interrupteur</a>
+	<li><a href="#sw" title="Titre">Add devices / Ajout d'appareils</a>
 		<ul>
-			<li><a href="#Sfr" title="Titre">Francais</a></li>
 			<li><a href="#Sen" title="Titre">English</a></li>
+			<li><a href="#Sfr" title="Titre">Francais</a></li>
 		</ul>
 	</li>
 </ul>
@@ -18,181 +19,193 @@
 
 
 
-<h2 id="th">Thermostat</h2>
+<h2 id="driver">Handlers</h2>
 <h3 id="Ten">Driver installation STEP BY STEP: </h3>
 
 
-1. log on : [smartthings API](https://graph.api.smartthings.com/ide/devices)
+1. Log on : [smartthings API](https://graph.api.smartthings.com/ide/devices)
 
-2. click on "My Device Handlers"
+2. Click on "My Device Handlers"
 
-	![Image device Handlers](https://github.com/sinopetechnologies/pictures_readme/blob/master/deviceHandler.PNG)
+	![Image device Handlers](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/deviceHandler.PNG)
 
 3. Click on "Create New Device Handler"
 
-4. Click on "From Code" and copy [the code](https://github.com/sinopetechnologies/smartThings/blob/master/driver_device_thermostat.groovy)
+4. Click on "From Code" and copy one of those handler code :
+	* [Thermostat handler](https://github.com/sinopetechnologies/smartThings/blob/master/driver_device_thermostat.groovy)
+	* [Lightswitch handler](https://github.com/sinopetechnologies/smartThings/blob/master/driver_device_lightswitch.groovy),
+	* [Dimmer handler](https://github.com/sinopetechnologies/smartThings/blob/master/driver_device_dimmer.groovy),
+	* [Load controller handler](https://github.com/sinopetechnologies/smartThings/blob/master/driver_device_loadcontroller.groovy)
 
-	![Image code smartthings](https://github.com/sinopetechnologies/pictures_readme/blob/master/copy_code.PNG)
+	![Image code smartthings](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/copy_code.PNG)
 
 5. Click on "Create"
 
 6. "Save" and click on "publish for me" 
 
-	![Image save and publish](https://github.com/sinopetechnologies/pictures_readme/blob/master/save%26publish.PNG)
+	![Image save and publish](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/save%26publish.PNG)
 
-7. Click on "My Devices" and "New Device"
+7. Repeat steps 3 to 6 for every needed handler
 
-	![Image device & New Device](https://github.com/sinopetechnologies/pictures_readme/blob/master/new_device.PNG)
+8. Click on "My SmartApps" and "New SmartApp"
 
-8. Fill in the form  and change type for "Sinope technologie Thermostat" at the end of the list
+	![Image change type](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/createSmartApp.PNG)
 
-	![Image change type](https://github.com/sinopetechnologies/pictures_readme/blob/master/type.PNG)
+9. Click on "From Code" and copy [the service manager code](https://github.com/sinopetechnologies/smartThings/blob/master/service_app.groovy)
 
-9. Connect to your smartthing phone app
+	![Image code smartthings](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/codeSmartApp.PNG)
 
-10. Click on your Device create in step 8 
-
-11. Click on parameter
-
-	![Image parameter button](https://github.com/sinopetechnologies/pictures_readme/blob/master/apps_sinope.png)
-
-12. Fill in the form
-
-	![Image forms](https://github.com/sinopetechnologies/pictures_readme/blob/master/forms.png)
-
-13. Click on "Done"
+10. Click on "Create"
 
 
-<h2 id="Tfr">Installer le pilote étape par étape : </h2>
+<h2 id="Tfr">Installer les pilotes étape par étape : </h2>
 
 
 1. Connectez vous sur : [l' API de Smartthings ](https://graph.api.smartthings.com/ide/devices)
 
 2. Appuyez sur " My Device Handlers "
 
-	![Image device Handlers](https://github.com/sinopetechnologies/pictures_readme/blob/master/deviceHandler.PNG)
+	![Image device Handlers](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/deviceHandler.PNG)
 
 3. Appuyez sur " Create New Device Handler "
 
-4. Appuyez sur " From Code " et copiez [le code](https://github.com/sinopetechnologies/smartThings/blob/master/driver_device_thermostat.groovy)
+4. Appuyez sur " From Code " et copiez le code de l'un de ces pilotes :
+	* [Pilote de thermostat](https://github.com/sinopetechnologies/smartThings/blob/master/driver_device_thermostat.groovy)
+	* [Pilote d'interrupteur](https://github.com/sinopetechnologies/smartThings/blob/master/driver_device_lightswitch.groovy),
+	* [Pilote de  gradateur](https://github.com/sinopetechnologies/smartThings/blob/master/driver_device_dimmer.groovy),
+	* [Pilote de contrôleur de charge](https://github.com/sinopetechnologies/smartThings/blob/master/driver_device_loadcontroller.groovy)
 
-	![Image code smartthings](https://github.com/sinopetechnologies/pictures_readme/blob/master/copy_code.PNG)
+	![Image code smartthings](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/copy_code.PNG)
 
 5. Appuyez sur " Create "
 
 6. Appuyez sur " Save " et " publish for me " 
 
-	![Image save and publish](https://github.com/sinopetechnologies/pictures_readme/blob/master/save%26publish.PNG)
+	![Image save and publish](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/save%26publish.PNG)
 
-7. Appuyez sur " My Devices " et " New Device "
+7. Répéter les étapes 3 à 6 pour les différents pilotes nécessaire
 
-	![Image device & New Device](https://github.com/sinopetechnologies/pictures_readme/blob/master/new_device.PNG)
+8. Appuyez sur "My SmartApps" and on "New SmartApp"
 
-8. Complétez le formulaire et changer le titre pour " Sinope technologie Thermostat ". Il se trouve en fin de liste.
+	![Image change type](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/createSmartApp.PNG))
 
-	![Image change type](https://github.com/sinopetechnologies/pictures_readme/blob/master/type.PNG)
+9. Appuyez sur "From Code" et copiez [le code du service manager](https://github.com/sinopetechnologies/smartThings/blob/master/service_app.groovy)
 
-9. Connectez vous sur l'application Smartthings de votre téléphone
+	![Image code smartthings](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/codeSmartApp.PNG))
 
-10. Appuyez sur le thermostat que vous avez créé en étape 8.
+10. Appuyez sur "Create"
 
-11. Appuyez sur paramètre
 
-	![Image parameter button](https://github.com/sinopetechnologies/pictures_readme/blob/master/apps_sinope.png)
 
-12. Complétez le formulaire
 
-	![Image forms](https://github.com/sinopetechnologies/pictures_readme/blob/master/forms.png)
 
-13. Appuyez sur " Done "
+
+
+
+
+
+
+
+
+
 
 ==========================================================================================================================================================
 ==========================================================================================================================================================
 
-<h2 id="sw">Ligthswitch / Interrupteur</h2>
-<h3 id="Sen">Driver installation STEP BY STEP: </h3>
+<h2 id="sw">Add devices</h2>
+<h3 id="Sen">Add a device STEP BY STEP: </h3>
 
 
-1. log on : [smartthings API](https://graph.api.smartthings.com/ide/devices)
+1. Log on : [smartthings API](https://graph.api.smartthings.com/ide/devices)
 
-2. click on "My Device Handlers"
+2. Click on "My Devices" and "New Device"
 
-	![Image device Handlers](https://github.com/sinopetechnologies/pictures_readme/blob/master/deviceHandler.PNG)
+	![Image device & New Device](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/new_device.PNG)
 
-3. Click on "Create New Device Handler"
+3. Fill in the form and change type for one of the following at the end of the list:
+	* Sinopé Technologies Inc. Dimmer
+	* Sinopé Technologies Inc. Lightswitch
+	* Sinopé Technologies Inc. loadController
+	* Sinopé Technologies Inc. Thermostat
 
-4. Click on "From Code" and copy [the code](https://github.com/sinopetechnologies/smartThings/blob/master/driver_device_ligthswitch.groovy)
+	![Image change type](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/type.PNG)
 
-	![Image code smartthings](https://github.com/sinopetechnologies/pictures_readme/blob/master/copy_code.PNG)
+4. Connect to your smartthing phone app
 
-5. Click on "Create"
+5. Click on "Add a SmartApp" under Automation/SmartApps
+	If you already have a Sinopé Technologies Inc. service manager, go to step 9.
 
-6. "Save" and click on "publish for me" 
+	![Image code smartthings](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/addSmartApp-1.png)
 
-	![Image save and publish](https://github.com/sinopetechnologies/pictures_readme/blob/master/save%26publish.PNG)
+6. Click on "My Apps"
 
-7. Click on "My Devices" and "New Device"
+	![Image code smartthings](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/addSmartApp-2.png)
 
-	![Image device & New Device](https://github.com/sinopetechnologies/pictures_readme/blob/master/new_device.PNG)
+7. Click on "Sinopé Technologies Inc. service manage"
 
-8. Fill in the form  and change type for "Sinope technologie Ligthswitch" at the end of the list
+	![Image code smartthings](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/addSmartApp-3.png)
 
-	![Image change type](https://github.com/sinopetechnologies/pictures_readme/blob/master/type_sw.PNG)
+8. Fill in the form
 
-9. Connect to your smartthing phone app
+	![Image code smartthings](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/formSmartApp.png)
 
-10. Click on your Device create in step 8 
+9. Click on your Device create in step 3
 
-11. Click on parameter
+10. Click on parameter
 
-	![Image parameter button](https://github.com/sinopetechnologies/pictures_readme/blob/master/apps_sinope_sw.png)
+	![Image parameter button](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/apps_sinope.png)
 
-12. Fill in the form
+11. Fill in the form
 
-	![Image forms](https://github.com/sinopetechnologies/pictures_readme/blob/master/forms.png)
+	![Image forms](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/forms.png)
 
-13. Click on "Done"
+12. Click on "Done"
 
 
-<h2 id="Sfr">Installer le pilote étape par étape : </h2>
+<h2 id="Sfr">Ajouter un appareil étape par étape : </h2>
 
 
 1. Connectez vous sur : [l' API de Smartthings ](https://graph.api.smartthings.com/ide/devices)
 
-2. Appuyez sur " My Device Handlers "
+2. Appuyez sur " My Devices " et " New Device "
 
-	![Image device Handlers](https://github.com/sinopetechnologies/pictures_readme/blob/master/deviceHandler.PNG)
+	![Image device & New Device](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/new_device.PNG)
 
-3. Appuyez sur " Create New Device Handler "
+3. Complétez le formulaire et changer le type pour le champ correspondant. Il se trouve en fin de liste.
+	* Pour les gradateur : Sinopé Technologies Inc. Dimmer
+	* Pour les interrupteur : Sinopé Technologies Inc. Lightswitch
+	* Pour les contrôleur de charge : Sinopé Technologies Inc. loadController
+	* Pour les thermostat : Sinopé Technologies Inc. Thermostat
 
-4. Appuyez sur " From Code " et copiez [le code](https://github.com/sinopetechnologies/smartThings/blob/master/driver_device_ligthswitch.groovy)
+	![Image change type](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/type.PNG)
 
-	![Image code smartthings](https://github.com/sinopetechnologies/pictures_readme/blob/master/copy_code.PNG)
+4. Connectez vous sur l'application Smartthings de votre téléphone
 
-5. Appuyez sur " Create "
+5. Appuyez sur "Add a SmartApp" sous Automation/SmartApps
+	Si vous possédez déjà un smartApps Sinopé Technologies Inc. service manager, allez à l'étape 9.
 
-6. Appuyez sur " Save " et " publish for me " 
+	![Image code smartthings](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/addSmartApp-1.png)
 
-	![Image save and publish](https://github.com/sinopetechnologies/pictures_readme/blob/master/save%26publish.PNG)
+6. Appuyez sur "My Apps"
 
-7. Appuyez sur " My Devices " et " New Device "
+	![Image code smartthings](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/addSmartApp-2.png)
 
-	![Image device & New Device](https://github.com/sinopetechnologies/pictures_readme/blob/master/new_device.PNG)
+7. Appuyez sur "Sinopé Technologies Inc. service manage"
 
-8. Complétez le formulaire et changer le titre pour " Sinope technologie Ligthswitch ". Il se trouve en fin de liste.
+	![Image code smartthings](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/addSmartApp-3.png)
 
-	![Image change type](https://github.com/sinopetechnologies/pictures_readme/blob/master/type_sw.PNG)
+8. Complétez le formulaire
 
-9. Connectez vous sur l'application Smartthings de votre téléphone
+	![Image code smartthings](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/formSmartApp.png)
 
-10. Appuyez sur l'interrupteur que vous avez créé en étape 8.
+10. Appuyez sur l'appareil que vous avez crée en étape 3.
 
 11. Appuyez sur paramètre
 
-	![Image parameter button](https://github.com/sinopetechnologies/pictures_readme/blob/master/apps_sinope_sw.png)
+	![Image parameter button](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/apps_sinope.png)
 
 12. Complétez le formulaire
 
-	![Image forms](https://github.com/sinopetechnologies/pictures_readme/blob/master/forms.png)
+	![Image forms](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/forms.png)
 
 13. Appuyez sur " Done "
