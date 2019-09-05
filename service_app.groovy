@@ -53,7 +53,7 @@ def updated() {
     unschedule()
 
     switches.each{device ->
-        runEvery1Minute(refreshDevices,[data:[deviceId:device?.id]])
+        runEvery5Minutes(refreshDevices,[data:[deviceId:device?.id]])
     }
     thermostats.each{device ->
         runEvery5Minutes(refreshDevices,[data:[deviceId:device?.id]])
