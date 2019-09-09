@@ -128,9 +128,11 @@
 	* Sinopé Technologies Inc. loadController
 	* Sinopé Technologies Inc. Thermostat
 
+	Fill "Device Network Id" with random text. This field is mandatory for SmartThings, but it's never used.
+
 	![Image change type](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/type.PNG)
 
-4. Connect to your smartthing phone app
+4. Connect to your SmartThings phone app
 
 5. Click on "Add a SmartApp" under Automation/SmartApps
 	If you already have a Sinopé Technologies Inc. service manager, go to step 9.
@@ -157,6 +159,8 @@
 
 11. Fill in the form
 
+	The device name must be unique for its location.
+
 	![Image forms](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/forms.png)
 
 12. Click on "Done"
@@ -177,9 +181,11 @@
 	* Pour les contrôleur de charge : Sinopé Technologies Inc. loadController
 	* Pour les thermostat : Sinopé Technologies Inc. Thermostat
 
+	Complétez "Device Network Id" avec un texte aléatoire. Ce champs est obligatoire pour SmartThings, mais il n'est jamais utilisé.
+
 	![Image change type](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/type.PNG)
 
-4. Connectez vous sur l'application Smartthings de votre téléphone
+4. Connectez vous sur l'application SmartThings de votre téléphone
 
 5. Appuyez sur "Add a SmartApp" sous Automation/SmartApps
 	Si vous possédez déjà un smartApps Sinopé Technologies Inc. service manager, allez à l'étape 9.
@@ -201,6 +207,8 @@
 10. Appuyez sur l'appareil que vous avez crée en étape 3.
 
 11. Appuyez sur paramètre
+
+	Le nom de l'appareil doit être unique pour son emplacement.
 
 	![Image parameter button](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/apps_sinope.png)
 
