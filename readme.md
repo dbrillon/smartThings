@@ -135,7 +135,7 @@
 4. Connect to your SmartThings phone app
 
 5. Click on "Add a SmartApp" under Automation/SmartApps
-	If you already have a Sinopé Technologies Inc. service manager, go to step 9.
+	If you already have a Sinopé Technologies Inc. service manager, click on it and go to step 8.
 
 	![Image code smartthings](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/addSmartApp-1.png)
 
@@ -148,6 +148,7 @@
 	![Image code smartthings](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/addSmartApp-3.png)
 
 8. Fill in the form
+	Update your selected device list whenever you add a new device
 
 	![Image code smartthings](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/formSmartApp.png)
 
@@ -188,7 +189,7 @@
 4. Connectez vous sur l'application SmartThings de votre téléphone
 
 5. Appuyez sur "Add a SmartApp" sous Automation/SmartApps
-	Si vous possédez déjà un smartApps Sinopé Technologies Inc. service manager, allez à l'étape 9.
+	Si vous possédez déjà un smartApps Sinopé Technologies Inc. service manager, appuyez sur celui-ci puis allez à l'étape 8.
 
 	![Image code smartthings](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/addSmartApp-1.png)
 
@@ -201,6 +202,7 @@
 	![Image code smartthings](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/addSmartApp-3.png)
 
 8. Complétez le formulaire
+	Assurez vous de mettre à jour la liste des appareils sélectionné à chaque fois que vous en ajoutez un nouveau.
 
 	![Image code smartthings](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/formSmartApp.png)
 
