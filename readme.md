@@ -147,8 +147,7 @@
 
 	![Image code smartthings](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/addSmartApp-3.png)
 
-8. Fill in the form
-	Update your selected device list whenever you add a new device
+8. Fill in the form. Update your selected device list whenever you add a new device.
 
 	![Image code smartthings](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/formSmartApp.png)
 
@@ -201,8 +200,7 @@
 
 	![Image code smartthings](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/addSmartApp-3.png)
 
-8. Complétez le formulaire
-	Assurez vous de mettre à jour la liste des appareils sélectionné à chaque fois que vous en ajoutez un nouveau.
+8. Complétez le formulaire. Assurez vous de mettre à jour la liste des appareils sélectionné à chaque fois que vous en ajoutez un nouveau.
 
 	![Image code smartthings](https://raw.githubusercontent.com/sinopetechnologies/pictures_readme/master/formSmartApp.png)
 
