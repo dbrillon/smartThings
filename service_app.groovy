@@ -12,7 +12,7 @@ definition(
 preferences {
   	section ("Devices to connect") {
     	input "switches", "capability.switch", title: "Select your Sinopé Technologies Inc. devices", multiple: true, required: false
-    	// input "thermostats", "capability.thermostatHeatingSetpoint", title: "Which thermostat?", multiple: true, required: false
+    	input "thermostats", "capability.thermostatHeatingSetpoint", title: "Select your Sinopé Technologies Inc. thermostat?", multiple: true, required: false
     }
     section ("Account info") {
         input "email", "text", title: "Your neviweb® account login e-mail", description: "Your neviweb® account login e-mail"
@@ -23,7 +23,7 @@ preferences {
 
 def refreshDevices(data){
     def output = ["session": getSessionId(), "action": "refresh", "deviceId": ""]
-
+    log.info("Refreshing devices")
     switches.each{device ->
         output.deviceId = device.id
         startDevicesCommunicationsHandlerRefresh(output)
@@ -111,9 +111,6 @@ def getSessionId(){
 		return state.session
 	}
     else{
-        if(state.session){
-            logout();
-        }
         return connect();
     }
 }
@@ -126,9 +123,6 @@ def login() {
         requestContentType: "application/json; charset=UTF-8",
         body: ["username": settings.email, "password": settings.password, "interface": "neviweb", "stayConnected": true]
     ]
-	if(state?.session){
-    	logout();
-	}
     return requestApi("login", params);
 }
 
@@ -138,15 +132,15 @@ def connect() {
         uri: "${state.server}",
         path: 'connect',
         requestContentType: "application/json; charset=UTF-8",
-        headers: ['refreshToken' : state?.refreshToken]
-    ]
-	if(state?.session){
-    	logout();
-	}
+        headers: [
+            'refreshToken' : state?.refreshToken,
+            'Session-Id' : state?.session] 
+    ];
     def session = requestApi("connect", params);
     if(session){
         return session;
     }else{
+        logout();
         return login()
     }
 }
@@ -156,20 +150,25 @@ def logout() {
 		uri: "${state.server}",
         path: "logout",
        	requestContentType: "application/json, text/javascript, */*; q=0.01",
-        headers: ['Session-Id' : state?.session]
+        headers: [
+            'refreshToken' : state?.refreshToken,
+            'Session-Id' : state?.session
+        ]
    	]
     requestApi("logout", params)
 }
 
 def requestApi(actionApi, params){
     params.uri = "https://smartthings.neviweb.com/"
-	log.info("requestApi - ${actionApi}, -> ${params}");
+	log.trace("api call - ${actionApi}");
 	switch(actionApi){
 		case "login":
 			httpPost(params) { resp ->
 			// // log.info(resp.data)
 			if (!resp?.data?.session || resp?.data?.error){
-				log.error(resp?.data?.error)
+				//log.error(resp?.data?.error)
+                log.warn("Unable to connect to neviweb")
+                logout();
                 return null;
 			}else{
 				// log.info("New access token")
@@ -186,6 +185,7 @@ def requestApi(actionApi, params){
 			// // log.info(resp.data)
 			if (!resp?.data?.session || resp?.data?.error){
 				// log.error(resp?.data?.error)
+                logout();
                 return null;
 			}else{
 				// log.info("New access token")
@@ -211,5 +211,4 @@ def requestApi(actionApi, params){
 			}
 		break;
 	}
-
 }
