@@ -1,5 +1,9 @@
-
-
+/**
+Copyright Sinopé Technologies
+1.3.0
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
+ *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+**/
 metadata {
 	preferences {
 		input("locationname", "text", title: "Name of your neviweb® location", description: "Location name", required: true, displayDuringSetup: true)
@@ -129,58 +133,71 @@ def refresh(){
 }
 
 def StartCommunicationWithServer(data){
-	log.trace("Connexion comfirmed - \"${device.name}\"")
-	log.info("Action \"${data?.action}\" - \"${device.name}\"")
-	if( !state.deviceId || state.deviceId == true || state.deviceName != settings.devicename.toLowerCase().replaceAll("\\s", "") || state.locationName != settings.locationname.toLowerCase().replaceAll("\\s", "") ){
-		state.deviceId = deviceId(data?.session)
-	}
-	def params = [
-		path: "device/${state.deviceId}/attribute",
-		headers: ['Session-Id' : data.session]
-	]
-	if(!state.deviceId){
-		log.warn ("No device id found")
-		sendEvent(name: 'temperature', value: null, unit: location?.getTemperatureScale())
-		sendEvent(name: 'temperatureMeasurement', value: null, unit: location?.getTemperatureScale())
-		sendEvent(name: 'heatingSetpoint', value: null, unit: location?.getTemperatureScale())
-		sendEvent(name: 'outputPercentDisplay', value: null)
-		sendEvent(name: 'thermostatOperatingState', value: null)
-		state.heatingSetpoint = 0
-    	return sendEvent(name: 'error', value: "${error(1004)}")
+	if(data?.error){
+			sendEvent(name: 'error', value: "${data.error}")
+			log.warn("${data.error}")
 	}else{
-		switch(data.action){
-			case "heatingSetpointUp":
-				params.body = ['roomSetpoint' : state.heatingSetpoint.toDouble()]
-				params.body.floorSetpoint = params.body.roomSetpoint
-				params.contentType = 'application/json'
-				requestApi("setDevice", params);
-				data.action = "refresh"
-				StartCommunicationWithServer(data)
-				break;
-			case "heatingSetpointDown":
-				params.body = ['roomSetpoint' : state.heatingSetpoint.toDouble()]
-				params.body.floorSetpoint = params.body.roomSetpoint
-				params.contentType = 'application/json'
-				requestApi("setDevice", params);
-				data.action = "refresh"
-				StartCommunicationWithServer(data)
-				break;
-			case "setHeatingSetpoint":
-				params.body = ['roomSetpoint' : FormatTemp(data.value,true)]
-				params.body.floorSetpoint = params.body.roomSetpoint
-				params.contentType = 'application/json'
-				requestApi("setDevice", params);
-				data.action = "refresh"
-				StartCommunicationWithServer(data)
-				break;
-			case "refresh":
-				params.query = ['attributes' : "airFloorMode,floorTemperature,floorSetpoint,roomTemperature,roomSetpoint,outputPercentDisplay"]
-				requestApi("deviceData", params);
-				break;
-			default: 
-				log.warn "invalide action"
+		
+		log.info("Action \"${data?.action}\" - \"${device.name}\"")
+		if( !state.deviceId || state.deviceId == true || state.deviceName != settings.devicename.toLowerCase().replaceAll("\\s", "") || state.locationName != settings.locationname.toLowerCase().replaceAll("\\s", "") ){
+			state.deviceId = deviceId(data?.session)
+		}
+		def params = [
+			path: "device/${state.deviceId}/attribute",
+			headers: ['Session-Id' : data.session]
+		]
+		if(!state.deviceId){
+			log.warn ("No device id found")
+			sendEvent(name: 'temperature', value: null, unit: location?.getTemperatureScale())
+			sendEvent(name: 'temperatureMeasurement', value: null, unit: location?.getTemperatureScale())
+			sendEvent(name: 'heatingSetpoint', value: null, unit: location?.getTemperatureScale())
+			sendEvent(name: 'outputPercentDisplay', value: null)
+			sendEvent(name: 'thermostatOperatingState', value: null)
+			state.heatingSetpoint = 0
+			return sendEvent(name: 'error', value: "${error(1004)}")
+		}else{
+			switch(data.action){
+				case "heatingSetpointUp":
+					params.body = ['roomSetpoint' : state.heatingSetpoint.toDouble()]
+					params.body.floorSetpoint = params.body.roomSetpoint
+					params.contentType = 'application/json'
+					requestApi("setDevice", params);
+					data.action = "refresh"
+					StartCommunicationWithServer(data)
+					break;
+				case "heatingSetpointDown":
+					params.body = ['roomSetpoint' : state.heatingSetpoint.toDouble()]
+					params.body.floorSetpoint = params.body.roomSetpoint
+					params.contentType = 'application/json'
+					requestApi("setDevice", params);
+					data.action = "refresh"
+					StartCommunicationWithServer(data)
+					break;
+				case "setHeatingSetpoint":
+					params.body = ['roomSetpoint' : FormatTemp(data.value,true)]
+					params.body.floorSetpoint = params.body.roomSetpoint
+					params.contentType = 'application/json'
+					requestApi("setDevice", params);
+					data.action = "refresh"
+					StartCommunicationWithServer(data)
+					break;
+				case "refresh":
+					params.query = ['attributes' : "airFloorMode,floorTemperature,floorSetpoint,roomTemperature,roomSetpoint,outputPercentDisplay"]
+					requestApi("deviceData", params);
+					break;
+				default: 
+					log.warn "invalide action"
+			}
 		}
 	}
+}
+
+def askForSessionReset(error){
+	if(error){
+		sendEvent(name: 'error', value: "${error}")
+	}
+	def timeInSeconds = (Math.round(now()/1000))
+	sendEvent(name: "thermostat", value:  device.id+": "+timeInSeconds, state: "resetSession", data: [deviceId: device.id, action: "resetSession", evtTime: timeInSeconds])
 }
 
 def deviceId(session){
@@ -313,6 +330,9 @@ def requestApi(actionApi, params){
 			httpGet(params) {resp ->
 				isExpiredSessionEvent(resp)
 				data.devices_list = resp.data
+				if(resp?.data?.error?.code == "USRSESSEXP"){
+					askForSessionReset();
+				}
 				
 			}
 		break;
@@ -320,6 +340,9 @@ def requestApi(actionApi, params){
 			httpGet(params) {resp ->
 				isExpiredSessionEvent(resp)
 				data.location_list = resp.data
+				if(resp?.data?.error?.code == "USRSESSEXP"){
+					askForSessionReset();
+				}
 				
 			}
 		break;
@@ -361,6 +384,9 @@ def requestApi(actionApi, params){
 						sendEvent(name: 'thermostatOperatingState', value: ((data.status.outputPercentDisplay > 10)?"heating":"idle"))
 						// sendEvent(name: "thermostatMode", value: ((data.status.outputPercentDisplay > 0)?"Heat":"Idle"))
 					}else{
+						if(resp?.data?.error?.code == "USRSESSEXP"){
+							askForSessionReset();
+						}
 						sendEvent(name: 'temperature', value: null, unit: location?.getTemperatureScale())
 						sendEvent(name: 'temperatureMeasurement', value: null, unit: location?.getTemperatureScale())
 						sendEvent(name: 'heatingSetpoint', value: null, unit: location?.getTemperatureScale())
@@ -395,6 +421,9 @@ def requestApi(actionApi, params){
 						// params.query = ['attributes' : "outputPercentDisplay"]
 						// requestApi("deviceData", params);
 					}else{
+						if(resp?.data?.error?.code == "USRSESSEXP"){
+							askForSessionReset();
+						}
 						isDeviceIdValid(params?.headers["Session-Id"]);
 					}
 				}
