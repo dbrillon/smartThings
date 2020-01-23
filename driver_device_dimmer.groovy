@@ -1,6 +1,6 @@
 /**
 Copyright Sinopé Technologies
-1.3.0
+1.3.1
  *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
  *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
 **/
@@ -11,7 +11,7 @@ preferences {
 }
 
 metadata {
-	definition (name: "Sinopé Technologies Inc. Dimmer", namespace: "Sinopé Technologies Inc.", author: "Vanessa Pepin") {
+	definition (name: "Sinopé Technologies Inc. Dimmer", namespace: "Sinopé Technologies Inc.", author: "Sinopé Technologies Inc.") {
 		capability "Switch"
         capability "Switch Level"
 		capability "Refresh"

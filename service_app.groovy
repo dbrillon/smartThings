@@ -1,6 +1,6 @@
 /**
 Copyright Sinopé Technologies
-1.3.0
+1.3.1
  *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
  *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
 **/
@@ -8,9 +8,9 @@ Copyright Sinopé Technologies
 definition(
     name: "Sinopé Technologies Inc. service manager",
     namespace: "Sinopé Technologies Inc.",
-    author: "Vincent Beauregard",
+    author: "Sinopé Technologies Inc.",
     description: "Smart app to support Sinopé Miwi and Wi-Fi devices linked to Neviweb",
-    category: "Smart home",
+    category: "SmartThings Labs",
     iconUrl: "https://neviweb.com/assets/icons/icon-144x144.png",
     iconX2Url: "https://neviweb.com/assets/icons/icon-144x144.png"
     
@@ -107,10 +107,12 @@ def startDevicesCommunicationsHandler(evt){
 }
 
 def startDevicesCommunicationsHandlerRefresh(data){
-    if(data?.session && data?.deviceId){
-        getDeviceObj(data.deviceId)?.StartCommunicationWithServer(data);
-    }else if(data?.error && data?.deviceId){
-        getDeviceObj(data.deviceId)?.StartCommunicationWithServer(data);
+    if((data?.session && data?.deviceId) || (data?.error && data?.deviceId)){
+        try{
+            getDeviceObj(data.deviceId).StartCommunicationWithServer(data);
+        }catch(e){
+            // caused by non-sinope devices. Ignored
+        }
     }
     return;
 }
