@@ -468,7 +468,7 @@ def error(error){
 def FormatTemp(temp,invert){
 	if (temp!=null){
 		if(invert){
-			float i=Float.valueOf(temp)
+			float i=Float.parseFloat(temp)
 			switch (location?.getTemperatureScale()) {
 				case "C":
 					return i.round(2)
@@ -481,7 +481,7 @@ def FormatTemp(temp,invert){
 
 		}else{
 
-			float i=Float.valueOf(temp)
+			float i=Float.parseFloat(temp)
 			switch (location?.getTemperatureScale()) {
 				case "C":
 					return i.round(2)
